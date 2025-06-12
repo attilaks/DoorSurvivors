@@ -13,7 +13,7 @@ namespace Code.Authoring
 		{
 			public override void Bake(PlayerPrefabAuthoring authoring)
 			{
-				var entityPrefab  = GetEntity(authoring.playerPrefab, TransformUsageFlags.Dynamic);
+				var entityPrefab = GetEntity(authoring.playerPrefab, TransformUsageFlags.Dynamic);
 				
 				var entity = GetEntity(TransformUsageFlags.None);
 				AddComponent(entity, new PlayerPrefab

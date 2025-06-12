@@ -22,9 +22,9 @@ namespace Code.Systems
 			foreach (var (_, playerTransform) in 
 			         SystemAPI.Query<RefRO<PlayerTag>, RefRO<LocalTransform>>())
 			{
-				var playerPosition = playerTransform.ValueRO.Position;
+				Vector3 playerPosition = playerTransform.ValueRO.Position;
 				_camera.transform.position = new Vector3(playerPosition.x, playerPosition.y, _camera.transform.position.z);
-				_camera.transform.LookAt(playerTransform.ValueRO.Position);
+				_camera.transform.LookAt(playerPosition);
 				return;
 			}
 		}

@@ -273,6 +273,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1254508303}
   - component: {fileID: 1254508302}
+  - component: {fileID: 1254508304}
   m_Layer: 0
   m_Name: Authoring
   m_TagString: Untagged
@@ -293,6 +294,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Code.Authoring.PlayerPrefabAuthoring
   playerPrefab: {fileID: 5772239834052150357, guid: bc3ea86359928db45b7c7546d811dc3a, type: 3}
+  speed: 5
 --- !u!4 &1254508303
 Transform:
   m_ObjectHideFlags: 0
@@ -308,6 +310,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1254508304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1254508301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d23f5c700ba14bfbacac1e554e644dc1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Code.Authoring.GlobalDataAuthoring
+  groundTransform: {fileID: 956495956}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
