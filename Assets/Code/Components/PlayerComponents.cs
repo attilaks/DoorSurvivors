@@ -15,7 +15,11 @@ namespace Code.Components
 	{
 		public Entity Prefab;
 		public float Speed;
+		public float ShootPerSecond;
+		public float Scale;
 	}
+	
+	public struct BulletTag : IComponentData {}
 
 	public struct HealthState : IComponentData
 	{
@@ -30,5 +34,6 @@ namespace Code.Components
 	public struct PlayerInputState : IComponentData
 	{
 		public float2 MoveDirection;
+		public float2 CursorPosition;
 	}
 }

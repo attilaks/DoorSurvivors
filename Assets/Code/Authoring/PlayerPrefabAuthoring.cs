@@ -10,8 +10,10 @@ namespace Code.Authoring
 		[SerializeField] private GameObject playerPrefab;
 		[SerializeField] private GameObject bulletPrefab;
 		
-		[SerializeField] private float playerSpeed = 5f;
-		[SerializeField] private float bulletSpeed = 40f;
+		[Header("Settings")]
+		[Range(1, 10)] [SerializeField] private float playerSpeed = 5f;
+		[Range(1, 100)] [SerializeField] private float bulletSpeed = 40f;
+		[Range(1, 20)] [SerializeField] private float shootsPerSecond = 5f;
 
 		private class PlayerPrefabBaker : Baker<PlayerPrefabAuthoring>
 		{
@@ -31,7 +33,9 @@ namespace Code.Authoring
 				AddComponent(bulletPrefabEntity, new BulletPrefab
 				{
 					Prefab = bulletPrefab,
-					Speed = authoring.bulletSpeed
+					Speed = authoring.bulletSpeed,
+					ShootPerSecond = authoring.shootsPerSecond,
+					Scale = authoring.bulletPrefab.transform.localScale.x
 				});
 			}
 		}

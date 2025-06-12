@@ -19,10 +19,12 @@ namespace Code.Systems
 		protected override void OnUpdate()
 		{
 			var moveInput = _input.Player.Move.ReadValue<Vector2>();
+			var cursorPosition = _input.Player.Look.ReadValue<Vector2>();
 			
-			foreach (var input in SystemAPI.Query<RefRW<PlayerInputState>>())
+			foreach (var (_, input) in SystemAPI.Query<RefRO<PlayerTag>,  RefRW<PlayerInputState>>())
 			{
 				input.ValueRW.MoveDirection = moveInput;
+				input.ValueRW.CursorPosition = cursorPosition;
 			}
 		}
 
