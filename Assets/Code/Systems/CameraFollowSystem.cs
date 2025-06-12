@@ -20,9 +20,10 @@ namespace Code.Systems
 			if (!_camera) return;
 
 			foreach (var (_, playerTransform) in 
-			         SystemAPI.Query<RefRO<PlayerTag>, RefRO<LocalTransform>>()) 
+			         SystemAPI.Query<RefRO<PlayerTag>, RefRO<LocalTransform>>())
 			{
-				_camera.transform.position = playerTransform.ValueRO.Position + new float3(0, 0, _camera.transform.position.z);
+				var playerPosition = playerTransform.ValueRO.Position;
+				_camera.transform.position = new Vector3(playerPosition.x, playerPosition.y, _camera.transform.position.z);
 				_camera.transform.LookAt(playerTransform.ValueRO.Position);
 				return;
 			}
