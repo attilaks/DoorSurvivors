@@ -47,7 +47,6 @@ namespace Code.Systems
 
 			Direction? direction = null;
 			var playerPosition = new float2();
-			var scale = 1f;
 			foreach (var (_, input, playerTransform) in 
 			         SystemAPI.Query<RefRO<PlayerTag>, RefRO<PlayerInputState>, RefRO<LocalTransform>>())
 			{
