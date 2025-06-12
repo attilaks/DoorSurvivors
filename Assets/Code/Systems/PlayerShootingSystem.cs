@@ -24,6 +24,7 @@ namespace Code.Systems
 		{
 			state.RequireForUpdate<BeginSimulationEntityCommandBufferSystem.Singleton>();
 			state.RequireForUpdate<BulletPrefab>();
+			state.RequireForUpdate<ArenaBoundsData>();
 			_timeSinceLastShot = 0;
 		}
 		
@@ -78,18 +79,58 @@ namespace Code.Systems
 	}
 	
 	[BurstCompile]
-	public partial struct BulletFlySystem : ISystem
+	public partial struct BulletFlySystem : ISystem, ISystemStartStop
 	{
+		private ArenaBoundsData _arenaBounds;
+		
+		public void OnCreate(ref SystemState state)
+		{
+			state.RequireForUpdate<ArenaBoundsData>();
+		}
+		
+		public void OnStartRunning(ref SystemState state)
+		{
+			_arenaBounds = SystemAPI.GetSingleton<ArenaBoundsData>();
+		}
+		
 		[BurstCompile]
 		public void OnUpdate(ref SystemState state)
 		{
 			var deltaTime = SystemAPI.Time.DeltaTime;
+
+			var entitiesToDestroy = new NativeList<Entity>(Allocator.Temp);
 			
-			foreach (var (_, direction, bulletTransform, speed) in 
-			         SystemAPI.Query<RefRO<BulletTag>, RefRO<Direction>, RefRW<LocalTransform>, RefRO<MoveSpeed>>())
+			foreach (var (_, direction, bulletTransform, speed, entity) in 
+			         SystemAPI.Query<RefRO<BulletTag>, RefRO<Direction>, RefRW<LocalTransform>, RefRO<MoveSpeed>>()
+				         .WithEntityAccess())
 			{
-				bulletTransform.ValueRW.Position += new float3(direction.ValueRO.Value.x, direction.ValueRO.Value.y, 0) * speed.ValueRO.Value * deltaTime;
+				var newXPosition = bulletTransform.ValueRW.Position.x + direction.ValueRO.Value.x 
+					* speed.ValueRO.Value * deltaTime;
+				if (newXPosition > _arenaBounds.MaxValues.x || newXPosition < _arenaBounds.MinValues.x)
+				{
+					entitiesToDestroy.Add(entity);
+					continue;
+				}
+				
+				var newYPosition = bulletTransform.ValueRW.Position.y + direction.ValueRO.Value.y 
+					* speed.ValueRO.Value * deltaTime;
+				if (newYPosition > _arenaBounds.MaxValues.y || newYPosition < _arenaBounds.MinValues.y)
+				{
+					entitiesToDestroy.Add(entity);
+					continue;
+				}
+				
+				bulletTransform.ValueRW.Position = new float3(newXPosition, newYPosition, 0);
 			}
+
+			for (var i = 0; i < entitiesToDestroy.Length; i++)
+			{
+				state.EntityManager.DestroyEntity(entitiesToDestroy[i]);
+			}
+
+			entitiesToDestroy.Dispose();
 		}
+
+		public void OnStopRunning(ref SystemState state) { }
 	}
 }

@@ -35,14 +35,13 @@ namespace Code.Systems
 		protected override void OnUpdate()
 		{
 			var moveInput = _input.Player.Move.ReadValue<Vector2>();
-			var moveInputFloat2 = new float2(moveInput.x, moveInput.y);
 			var screenCursorPosition = _input.Player.Look.ReadValue<Vector2>();
 			var worldCursorPosition = _camera.ScreenToWorldPoint(new Vector3(screenCursorPosition.x, screenCursorPosition.y, _camera.nearClipPlane));
 			var cursorPosition = new float2(worldCursorPosition.x, worldCursorPosition.y);
 			
 			new PlayerInputJob
 			{
-				MoveInput = moveInputFloat2,
+				MoveInput = moveInput,
 				CursorPosition = cursorPosition
 			}.ScheduleParallel();
 		}
