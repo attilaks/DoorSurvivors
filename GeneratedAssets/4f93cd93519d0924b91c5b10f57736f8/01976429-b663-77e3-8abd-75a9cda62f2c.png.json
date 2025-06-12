@@ -1,0 +1,19 @@
+{
+    "asset": "4f93cd93519d0924b91c5b10f57736f8",
+    "fileName": "01976429-b663-77e3-8abd-75a9cda62f2c.png",
+    "prompt": "A top-down shooter player character sprite in the style of Vampire Survivors, with a simple and clear design for Unity DOTS.",
+    "negativePrompt": "",
+    "model": "b91fcf71-f4cf-43cb-ba1e-1f22a1296e46",
+    "customSeed": -1,
+    "w3CTraceId": "aa6f89b679d3dc36dcf2ad1581eabb32",
+    "refinementMode": "Generation",
+    "pixelateTargetSize": 0,
+    "pixelateKeepImageSize": false,
+    "pixelatePixelBlockSize": 0,
+    "pixelateMode": 0,
+    "pixelateOutlineThickness": 0,
+    "doodles": {
+        "m_Items": []
+    },
+    "upscaleFactor": 0
+}
