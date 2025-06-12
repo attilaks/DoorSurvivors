@@ -294,7 +294,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Code.Authoring.PlayerPrefabAuthoring
   playerPrefab: {fileID: 5772239834052150357, guid: bc3ea86359928db45b7c7546d811dc3a, type: 3}
-  speed: 5
+  bulletPrefab: {fileID: 1365377704340323106, guid: f1fadff14a955d648acd1761f22bef50, type: 3}
+  playerSpeed: 5
+  bulletSpeed: 40
 --- !u!4 &1254508303
 Transform:
   m_ObjectHideFlags: 0

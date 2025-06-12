@@ -10,6 +10,12 @@ namespace Code.Components
 		public Entity Prefab;
 		public float Speed;
 	}
+	
+	public struct BulletPrefab : IComponentData
+	{
+		public Entity Prefab;
+		public float Speed;
+	}
 
 	public struct HealthState : IComponentData
 	{

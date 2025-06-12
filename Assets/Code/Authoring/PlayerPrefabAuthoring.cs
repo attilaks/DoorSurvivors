@@ -6,20 +6,32 @@ namespace Code.Authoring
 {
 	public class PlayerPrefabAuthoring : MonoBehaviour
 	{
+		[Header("Prefabs")]
 		[SerializeField] private GameObject playerPrefab;
-		[SerializeField] private float speed = 5f;
+		[SerializeField] private GameObject bulletPrefab;
+		
+		[SerializeField] private float playerSpeed = 5f;
+		[SerializeField] private float bulletSpeed = 40f;
 
 		private class PlayerPrefabBaker : Baker<PlayerPrefabAuthoring>
 		{
 			public override void Bake(PlayerPrefabAuthoring authoring)
 			{
-				var entityPrefab = GetEntity(authoring.playerPrefab, TransformUsageFlags.Dynamic);
+				var playerPrefab = GetEntity(authoring.playerPrefab, TransformUsageFlags.Dynamic);
+				var bulletPrefab = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic);
 				
-				var entity = GetEntity(TransformUsageFlags.None);
-				AddComponent(entity, new PlayerPrefab
+				var playerPrefabEntity = GetEntity(TransformUsageFlags.None);
+				AddComponent(playerPrefabEntity, new PlayerPrefab
 				{
-					Prefab = entityPrefab,
-					Speed = authoring.speed
+					Prefab = playerPrefab,
+					Speed = authoring.playerSpeed
+				});
+				
+				var bulletPrefabEntity = GetEntity(TransformUsageFlags.None);
+				AddComponent(bulletPrefabEntity, new BulletPrefab
+				{
+					Prefab = bulletPrefab,
+					Speed = authoring.bulletSpeed
 				});
 			}
 		}
