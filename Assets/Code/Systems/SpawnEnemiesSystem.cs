@@ -67,6 +67,8 @@ namespace Code.Systems
 		        Speed = _enemyPrefab.Speed
 		    });
 		    ecb.AddComponent<EnemyTag>(newEnemy);
+		    ecb.AddComponent<MovesToPlayerFlag>(newEnemy);
+		    ecb.SetComponentEnabled<MovesToPlayerFlag>(newEnemy, false);
 		    
 		    ecb.Playback(state.EntityManager);
 		    ecb.Dispose();

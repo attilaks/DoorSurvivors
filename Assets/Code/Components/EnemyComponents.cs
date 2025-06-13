@@ -16,4 +16,6 @@ namespace Code.Components
 		public float2 Direction;
 		public float Speed;
 	}
+	
+	public struct MovesToPlayerFlag : IComponentData, IEnableableComponent {}
 }
