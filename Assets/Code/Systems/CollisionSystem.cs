@@ -4,7 +4,6 @@ using Unity.Collections;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine;
 
 namespace Code.Systems
 {
@@ -16,18 +15,10 @@ namespace Code.Systems
 	[UpdateAfter(typeof(SpawnPlayerSystem))]
 	public partial struct CollisionSystem : ISystem
 	{
-		private EntityQuery _enemiesQuery;
-		private EntityQuery _bulletsQuery;
 		private EntityQuery _playerQuery;
 
 		public void OnCreate(ref SystemState state)
 		{
-			_enemiesQuery = SystemAPI.QueryBuilder()
-				.WithPresent<EnemyTag, LocalTransform, ColliderData>()
-				.Build();
-			_bulletsQuery = SystemAPI.QueryBuilder()
-				.WithPresent<BulletTag, LocalTransform, ColliderData>()
-				.Build();
 			_playerQuery = SystemAPI.QueryBuilder()
 				.WithPresent<PlayerTag, LocalTransform, ColliderData, HealthState>()
 				.Build();
@@ -38,57 +29,64 @@ namespace Code.Systems
 		[BurstCompile]
 		public void OnUpdate(ref SystemState state)
 		{
-			var enemyEntities = _enemiesQuery.ToEntityArray(Allocator.Temp);
-			var bulletEntities = _bulletsQuery.ToEntityArray(Allocator.Temp);
-			var player = _playerQuery.GetSingletonEntity();
-			
 			var transforms = SystemAPI.GetComponentLookup<LocalTransform>(true);
-			var colliders = SystemAPI.GetComponentLookup<ColliderData>(true);
-			var healths = SystemAPI.GetComponentLookup<HealthState>();
-			
-			var playerTransform = transforms[player];
-			var playerCollider = colliders[player];
-			ref var playerHealth = ref healths.GetRefRW(player).ValueRW;
+            var colliders = SystemAPI.GetComponentLookup<ColliderData>(true);
+            var healths = SystemAPI.GetComponentLookup<HealthState>();
+            
+            var playerEntity = _playerQuery.GetSingletonEntity();
+            var playerTransform = transforms[playerEntity];
+            var playerCollider = colliders[playerEntity];
+            ref var playerHealth = ref healths.GetRefRW(playerEntity).ValueRW;
 
-			var entitiesToDestroy = new NativeList<Entity>(Allocator.Temp);
-
-			for (var i = 0; i < enemyEntities.Length; i++)
-			{
-				var enemy = enemyEntities[i];
-				var enemyTransform = transforms[enemy];
-				var enemyCollider = colliders[enemy];
-
-				if (CheckAABBCollision(enemyTransform.Position.xy, enemyCollider.Size,
-					    playerTransform.Position.xy, playerCollider.Size))
-				{
-					playerHealth.Value -= 2;
-					entitiesToDestroy.Add(enemy);
-
-					if (playerHealth.Value <= 0)
-					{
-						//todo
-					}
-					continue;
-				}
-
-				for (var j = 0; j < bulletEntities.Length; j++)
-				{
-					var bullet = bulletEntities[j];
-					var bulletTransform = transforms[bullet];
-					var bulletCollider = colliders[bullet];
-					if (CheckAABBCollision(enemyTransform.Position.xy, enemyCollider.Size,
-						    bulletTransform.Position.xy, bulletCollider.Size))
-					{
-						entitiesToDestroy.Add(bullet);
-						entitiesToDestroy.Add(enemy);
-					}
-				}
-			}
-
-			for (var i = 0; i < entitiesToDestroy.Length; i++)
-			{
-				state.EntityManager.DestroyEntity(entitiesToDestroy[i]);
-			}
+            var ecb = new EntityCommandBuffer(Allocator.Temp);
+            
+            foreach (var (enemyTransform, enemyCollider, enemyEntity) 
+                in SystemAPI.Query<RefRO<LocalTransform>, RefRO<ColliderData>>()
+                    .WithAll<EnemyTag>()
+                    .WithEntityAccess())
+            {
+                bool enemyDestroyed = false;
+                
+                if (CheckAABBCollision(
+                    enemyTransform.ValueRO.Position.xy, enemyCollider.ValueRO.Size,
+                    playerTransform.Position.xy, playerCollider.Size))
+                {
+                    playerHealth.Value -= 2;
+                    enemyDestroyed = true;
+                    
+                    if (playerHealth.Value <= 0)
+                    {
+                        // Обработка смерти игрока
+                        //todo
+                    }
+                }
+                
+                if (!enemyDestroyed)
+                {
+                    foreach (var (bulletTransform, bulletCollider, bulletEntity) 
+                        in SystemAPI.Query<RefRO<LocalTransform>, RefRO<ColliderData>>()
+                            .WithAll<BulletTag>()
+                            .WithEntityAccess())
+                    {
+                        if (CheckAABBCollision(
+                            enemyTransform.ValueRO.Position.xy, enemyCollider.ValueRO.Size,
+                            bulletTransform.ValueRO.Position.xy, bulletCollider.ValueRO.Size))
+                        {
+                            ecb.DestroyEntity(bulletEntity);
+                            enemyDestroyed = true;
+                            break;
+                        }
+                    }
+                }
+                
+                if (enemyDestroyed)
+                {
+                    ecb.DestroyEntity(enemyEntity);
+                }
+            }
+            
+            ecb.Playback(state.EntityManager);
+            ecb.Dispose();
 		}
 
 		private bool CheckAABBCollision(float2 posA, float2 sizeA, float2 posB, float2 sizeB)
