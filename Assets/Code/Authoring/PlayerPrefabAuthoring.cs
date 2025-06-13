@@ -1,6 +1,7 @@
 ﻿using Code.Components;
 using Code.Systems;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Code.Authoring
@@ -24,19 +25,23 @@ namespace Code.Authoring
 				var bulletPrefab = GetEntity(authoring.bulletPrefab, TransformUsageFlags.Dynamic);
 				
 				var playerPrefabEntity = GetEntity(TransformUsageFlags.None);
+				var playerCollider = authoring.playerPrefab.GetComponent<BoxCollider>();
 				AddComponent(playerPrefabEntity, new PlayerPrefab
 				{
 					Prefab = playerPrefab,
-					Speed = authoring.playerSpeed
+					Speed = authoring.playerSpeed,
+					ColliderData = new float2(playerCollider.size.x, playerCollider.size.y)
 				});
 				
 				var bulletPrefabEntity = GetEntity(TransformUsageFlags.None);
+				var bulletCollider = authoring.bulletPrefab.GetComponent<BoxCollider>();
 				AddComponent(bulletPrefabEntity, new BulletPrefab
 				{
 					Prefab = bulletPrefab,
 					Speed = authoring.bulletSpeed,
 					ShootPerSecond = authoring.shootsPerSecond,
-					Scale = authoring.bulletPrefab.transform.localScale.x
+					Scale = authoring.bulletPrefab.transform.localScale.x,
+					ColliderData = new float2(bulletCollider.size.x, bulletCollider.size.y)
 				});
 			}
 		}

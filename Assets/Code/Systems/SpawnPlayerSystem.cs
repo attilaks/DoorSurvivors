@@ -18,6 +18,7 @@ namespace Code.Systems
 				ecb.AddComponent(playerEntity, new HealthState { Value = 10 });
 				ecb.AddComponent(playerEntity, new MoveSpeed { Value = prefab.ValueRO.Speed });
 				ecb.AddComponent<PlayerInputState>(playerEntity);
+				ecb.AddComponent(playerEntity, new ColliderData{Size = prefab.ValueRO.ColliderData});
 			}
 
 			ecb.Playback(state.EntityManager);

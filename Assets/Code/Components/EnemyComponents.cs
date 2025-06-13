@@ -9,6 +9,7 @@ namespace Code.Components
 	{
 		public Entity Prefab;
 		public float Speed;
+		public float2 ColliderData;
 	}
 	
 	public struct EnemyMovement : IComponentData

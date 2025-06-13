@@ -9,11 +9,12 @@ namespace Code.Components
 	{
 		public Entity Prefab;
 		public float Speed;
+		public float2 ColliderData;
 	}
 
 	public struct HealthState : IComponentData
 	{
-		public uint Value;
+		public int Value;
 	}
 
 	public struct MoveSpeed : IComponentData

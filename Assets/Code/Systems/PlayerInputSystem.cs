@@ -48,6 +48,7 @@ namespace Code.Systems
 
 		protected override void OnDestroy()
 		{
+			_input.Disable();
 			_input.Dispose();
 		}
 	}

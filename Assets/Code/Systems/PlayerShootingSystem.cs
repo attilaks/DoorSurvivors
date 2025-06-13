@@ -15,6 +15,7 @@ namespace Code.Systems
 		public float Speed;
 		public float ShootPerSecond;
 		public float Scale;
+		public float2 ColliderData;
 	}
 	
 	public struct Direction : IComponentData
@@ -44,6 +45,7 @@ namespace Code.Systems
 			_bullet = bulletPrefab.Prefab;
 			state.EntityManager.AddComponentData(_bullet, new MoveSpeed{Value = bulletPrefab.Speed});
 			state.EntityManager.AddComponent<BulletTag>(_bullet);
+			state.EntityManager.AddComponentData(_bullet, new ColliderData { Size = bulletPrefab.ColliderData });
 			
 			_intervalBetweenShots = 1f / bulletPrefab.ShootPerSecond;
 			_bulletScale = bulletPrefab.Scale;

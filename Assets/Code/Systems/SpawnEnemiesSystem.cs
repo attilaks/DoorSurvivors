@@ -69,6 +69,7 @@ namespace Code.Systems
 		    ecb.AddComponent<EnemyTag>(newEnemy);
 		    ecb.AddComponent<MovesToPlayerFlag>(newEnemy);
 		    ecb.SetComponentEnabled<MovesToPlayerFlag>(newEnemy, false);
+		    ecb.AddComponent(newEnemy, new ColliderData{Size = _enemyPrefab.ColliderData});
 		    
 		    ecb.Playback(state.EntityManager);
 		    ecb.Dispose();

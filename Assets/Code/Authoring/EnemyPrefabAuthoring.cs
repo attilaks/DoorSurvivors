@@ -1,5 +1,7 @@
 ﻿using Code.Components;
+using Code.Systems;
 using Unity.Entities;
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Code.Authoring
@@ -18,10 +20,12 @@ namespace Code.Authoring
 				var enemyPrefab = GetEntity(authoring.enemyPrefab, TransformUsageFlags.Dynamic);
 				
 				var enemyPrefabEntity = GetEntity(TransformUsageFlags.None);
+				var enemyCollider = authoring.enemyPrefab.GetComponent<BoxCollider>();
 				AddComponent(enemyPrefabEntity, new EnemyPrefab
 				{
 					Prefab = enemyPrefab,
-					Speed = authoring.enemySpeed
+					Speed = authoring.enemySpeed,
+					ColliderData = new float2(enemyCollider.size.x, enemyCollider.size.y)
 				});
 			}
 		}
