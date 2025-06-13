@@ -274,6 +274,7 @@ GameObject:
   - component: {fileID: 1254508303}
   - component: {fileID: 1254508302}
   - component: {fileID: 1254508304}
+  - component: {fileID: 1254508305}
   m_Layer: 0
   m_Name: Authoring
   m_TagString: Untagged
@@ -326,6 +327,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Code.Authoring.GlobalDataAuthoring
   groundTransform: {fileID: 956495956}
+  maxEnemies: 100
+--- !u!114 &1254508305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1254508301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b41e25322fd4dbfb3ced1532af8b3cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Code.Authoring.EnemyPrefabAuthoring
+  enemyPrefab: {fileID: 6752785759817215351, guid: 52a30a8cbd91b284d815c96b61016764, type: 3}
+  enemySpeed: 3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

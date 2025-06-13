@@ -14,4 +14,9 @@ namespace Code.Components
 			MinValues = minValues;
 		}
 	}
+
+	public struct EnemiesData : IComponentData
+	{
+		public uint MaxEnemies;
+	}
 }

@@ -7,6 +7,16 @@ using Unity.Transforms;
 
 namespace Code.Systems
 {
+	public struct BulletTag : IComponentData {}
+	
+	public struct BulletPrefab : IComponentData
+	{
+		public Entity Prefab;
+		public float Speed;
+		public float ShootPerSecond;
+		public float Scale;
+	}
+	
 	public struct Direction : IComponentData
 	{
 		public float2 Value;

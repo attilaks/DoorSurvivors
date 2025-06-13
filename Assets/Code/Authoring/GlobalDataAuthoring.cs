@@ -8,6 +8,7 @@ namespace Code.Authoring
 	public class GlobalDataAuthoring : MonoBehaviour
 	{
 		[SerializeField] private Transform groundTransform;
+		[SerializeField] private uint maxEnemies = 100;
 		
 		private class GlobalDataBaker : Baker<GlobalDataAuthoring>
 		{
@@ -24,6 +25,7 @@ namespace Code.Authoring
 
 				entityManager.AddComponentData(globalDataEntity, new ArenaBoundsData(
 					new float2(maxXValue, maxYValue), new float2(minXValue, minYValue)));
+				entityManager.AddComponentData(globalDataEntity, new EnemiesData { MaxEnemies = authoring.maxEnemies });
 			}
 		}
 	}
