@@ -31,6 +31,8 @@ namespace Code.Systems
 			_playerQuery = SystemAPI.QueryBuilder()
 				.WithPresent<PlayerTag, LocalTransform, ColliderData, HealthState>()
 				.Build();
+			
+			state.RequireForUpdate(_playerQuery);
 		}
 		
 		[BurstCompile]
@@ -91,14 +93,13 @@ namespace Code.Systems
 
 		private bool CheckAABBCollision(float2 posA, float2 sizeA, float2 posB, float2 sizeB)
 		{
-			var collisionX = posA.x + sizeA.x / 2 > posB.x - sizeB.x / 2 &&
-			                 posA.x - sizeA.x / 2 < posB.x + sizeB.x / 2;
-			if (!collisionX) return false;
-        
-			var collisionY = posA.y + sizeA.y / 2 > posB.y - sizeB.y / 2 &&
-			                 posA.y - sizeA.y / 2 < posB.y + sizeB.y / 2;
-        
-			return collisionY;
+			var minA = posA - sizeA * 0.5f;
+			var maxA = posA + sizeA * 0.5f;
+			var minB = posB - sizeB * 0.5f;
+			var maxB = posB + sizeB * 0.5f;
+
+			return !(maxA.x < minB.x || minA.x > maxB.x || 
+			         maxA.y < minB.y || minA.y > maxB.y);
 		}
 	}
 }
