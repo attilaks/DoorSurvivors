@@ -54,11 +54,10 @@ namespace Code.Systems
 				break;
 			}
 
-			foreach (var (transform, movement, entity) in
+			foreach (var (transform, movement) in
 			         SystemAPI.Query<RefRW<LocalTransform>, RefRO<EnemyMovement>>()
 				         .WithAll<MovesToPlayerFlag>()
-				         .WithPresent<EnemyTag>()
-				         .WithEntityAccess())
+				         .WithPresent<EnemyTag>())
 			{
 				var direction = math.normalize(playerPosition - transform.ValueRO.Position);
 				transform.ValueRW.Position += direction * movement.ValueRO.Speed * deltaTime;
