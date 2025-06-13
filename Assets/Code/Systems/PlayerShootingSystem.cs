@@ -97,40 +97,44 @@ namespace Code.Systems
 		public void OnUpdate(ref SystemState state)
 		{
 			var deltaTime = SystemAPI.Time.DeltaTime;
-
-			var entitiesToDestroy = new NativeList<Entity>(Allocator.Temp);
-			
-			foreach (var (_, direction, bulletTransform, speed, entity) in 
-			         SystemAPI.Query<RefRO<BulletTag>, RefRO<Direction>, RefRW<LocalTransform>, RefRO<MoveSpeed>>()
-				         .WithEntityAccess())
+			var ecb = new EntityCommandBuffer(Allocator.TempJob);
+    
+			new BulletFlyJob
 			{
-				var newXPosition = bulletTransform.ValueRW.Position.x + direction.ValueRO.Value.x 
-					* speed.ValueRO.Value * deltaTime;
-				if (newXPosition > _arenaBounds.MaxValues.x || newXPosition < _arenaBounds.MinValues.x)
-				{
-					entitiesToDestroy.Add(entity);
-					continue;
-				}
-				
-				var newYPosition = bulletTransform.ValueRW.Position.y + direction.ValueRO.Value.y 
-					* speed.ValueRO.Value * deltaTime;
-				if (newYPosition > _arenaBounds.MaxValues.y || newYPosition < _arenaBounds.MinValues.y)
-				{
-					entitiesToDestroy.Add(entity);
-					continue;
-				}
-				
-				bulletTransform.ValueRW.Position = new float3(newXPosition, newYPosition, 0);
-			}
-
-			for (var i = 0; i < entitiesToDestroy.Length; i++)
-			{
-				state.EntityManager.DestroyEntity(entitiesToDestroy[i]);
-			}
-
-			entitiesToDestroy.Dispose();
+				DeltaTime = deltaTime,
+				ArenaBounds = _arenaBounds,
+				ECB = ecb.AsParallelWriter()
+			}.ScheduleParallel();
+    
+			state.Dependency.Complete();
+			ecb.Playback(state.EntityManager);
+			ecb.Dispose();
 		}
 
 		public void OnStopRunning(ref SystemState state) { }
+	}
+	
+	[BurstCompile]
+	internal partial struct BulletFlyJob : IJobEntity
+	{
+		public float DeltaTime;
+		public ArenaBoundsData ArenaBounds;
+		public EntityCommandBuffer.ParallelWriter ECB;
+
+		private void Execute([ChunkIndexInQuery] int chunkIndex, Entity entity, 
+			ref LocalTransform transform, in BulletTag tag, in Direction direction, in MoveSpeed speed)
+		{
+			var newXPosition = transform.Position.x + direction.Value.x * speed.Value * DeltaTime;
+			var newYPosition = transform.Position.y + direction.Value.y * speed.Value * DeltaTime;
+        
+			if (newXPosition > ArenaBounds.MaxValues.x || newXPosition < ArenaBounds.MinValues.x ||
+			    newYPosition > ArenaBounds.MaxValues.y || newYPosition < ArenaBounds.MinValues.y)
+			{
+				ECB.DestroyEntity(chunkIndex, entity);
+				return;
+			}
+        
+			transform.Position = new float3(newXPosition, newYPosition, 0);
+		}
 	}
 }
