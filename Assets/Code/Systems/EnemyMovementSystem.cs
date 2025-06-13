@@ -26,6 +26,7 @@ namespace Code.Systems
 		public void OnUpdate(ref SystemState state)
 		{
 			var ecb = new EntityCommandBuffer(Allocator.TempJob);
+			var deltaTime = SystemAPI.Time.DeltaTime;
 			
 			foreach (var (transform, movement, entity) in 
 			         SystemAPI.Query<RefRW<LocalTransform>, RefRO<EnemyMovement>>()
@@ -34,7 +35,7 @@ namespace Code.Systems
 				         .WithEntityAccess())
 			{
 				var move = new float3(movement.ValueRO.Direction.x, movement.ValueRO.Direction.y, 0f);
-				transform.ValueRW.Position += move * movement.ValueRO.Speed * SystemAPI.Time.DeltaTime;
+				transform.ValueRW.Position += move * movement.ValueRO.Speed * deltaTime;
 
 				if (transform.ValueRO.Position.x < _arenaBounds.MaxValues.x
 				    && transform.ValueRO.Position.x > _arenaBounds.MinValues.x
@@ -60,7 +61,7 @@ namespace Code.Systems
 				         .WithEntityAccess())
 			{
 				var direction = math.normalize(playerPosition - transform.ValueRO.Position);
-				transform.ValueRW.Position += direction * movement.ValueRO.Speed * SystemAPI.Time.DeltaTime;
+				transform.ValueRW.Position += direction * movement.ValueRO.Speed * deltaTime;
 			}
 			
 			ecb.Playback(state.EntityManager);
